@@ -2,17 +2,17 @@
 from argparse import ArgumentParser
 
 
-from utils.utils import set_seed, get_dataloaders
+from utils.utils import set_seed, get_dataloaders, get_pretrained_resnet
 
 from torchvision.transforms import ToTensor, Resize
 from torchvision import transforms
 
-from model.cnn import CNN
 from model.trainer import Trainer
 
 import torch.optim as optim
 import torch.nn as nn
 import torch
+import torchvision
 
 from tqdm import tqdm
 
@@ -25,26 +25,29 @@ def main(args):
         Resize((128, 128))
     ])
 
+    device = 'cuda:1' if torch.cuda.is_available() else 'cpu'
+
     train_loader, val_loader, test_loader = get_dataloaders(args.root_path, args.batch_size, transform)
 
-    model = CNN()
+    resnet18 = get_pretrained_resnet()
 
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(resnet18.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
 
-    trainer = Trainer(optimizer, criterion, args.output_path)
+    trainer = Trainer(optimizer, criterion, args.output_path, device)
 
 
     for epoch in range(args.epochs):
-        train_loss, train_acc = trainer.train(model, train_loader, epoch)
+        train_loss, train_acc = trainer.train(resnet18, train_loader, epoch)
         print(f"\tTrain loss: {train_loss:.6f} \t Train accuracy: {train_acc:.2f}")
 
-        val_loss, val_acc = trainer.validate(model, val_loader)
+        val_loss, val_acc = trainer.validate(resnet18, val_loader)
         print(f"\tVal loss: {val_loss:.6f} \t Val accuracy: {val_acc:.2f}")
 
-    # save the ckpt for later
-    #model.save_ckpt('...')
-
+    torch.save({
+        'model_state_dict': resnet18.state_dict(),
+        'optimizer_state_dict': trainer.optimizer.state_dict(),
+    }, os.path.join(args.ckpt_path,'ckpt.pth'))
 
 if __name__ == '__main__':
 
