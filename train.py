@@ -1,8 +1,6 @@
-
 from argparse import ArgumentParser
 
-
-from utils.utils import set_seed, get_dataloaders, get_pretrained_resnet
+from utils.utils import set_seed, get_dataloaders
 
 from torchvision.transforms import ToTensor, Resize
 from torchvision import transforms
@@ -12,11 +10,9 @@ from model.trainer import Trainer
 import torch.optim as optim
 import torch.nn as nn
 import torch
-import torchvision
 
 from model.cnn import CNN
 
-from tqdm import tqdm
 
 import os
 
@@ -31,11 +27,9 @@ def main(args):
 
     train_loader, val_loader, _ = get_dataloaders(args.root_path, args.batch_size, transform)
 
-    # resnet18 = get_pretrained_resnet()
-
     model = CNN()
 
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.0001)
     criterion = nn.CrossEntropyLoss()
 
     trainer = Trainer(optimizer, criterion, args.output_path, device)
