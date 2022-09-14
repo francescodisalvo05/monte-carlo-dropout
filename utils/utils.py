@@ -24,7 +24,7 @@ def set_seed(seed):
 def get_dataloaders(root_path, batch_size, transform):
 
     # get only 1000 samples
-    filenames = os.listdir(root_path) + os.listdir(root_path)
+    filenames = os.listdir(root_path)
     labels = [1 if f.split(".")[0] == 'dog' else 0 for f in filenames]
 
     x_trainval, x_test, y_trainval, y_test = train_test_split(filenames, labels, stratify=labels, test_size=0.2)
