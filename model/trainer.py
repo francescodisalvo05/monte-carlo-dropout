@@ -7,24 +7,25 @@ from datetime import datetime
 
 class Trainer:
 
-    def __init__(self, optimizer, criterion, output_path):
+    def __init__(self, optimizer, criterion, output_path, device):
 
         self.optimizer = optimizer
         self.criterion = criterion
         self.output_path = output_path
-
-        pass
+        self.device = device
 
     def train(self, model, train_loader, epoch):
 
         train_loss, correct = 0.0, 0
-        model = model.float()
+        model = model.float().to(self.device)
 
         model.train()
 
         print(f"\nEpoch {epoch+1}")
 
         for idx, (images,labels) in enumerate(train_loader):
+
+            images, labels = images.to(self.device), labels.to(self.device)
 
             self.optimizer.zero_grad()
 
@@ -47,11 +48,14 @@ class Trainer:
     def validate(self, model, val_loader):
 
         val_loss, correct = 0.0, 0
-        model = model.float()
+        model = model.float().to(self.device)
         model.eval()
 
         with torch.no_grad():
             for idx, (images, labels) in enumerate(val_loader):
+
+                images, labels = images.to(self.device), labels.to(self.device)
+
                 outputs = model(images.float())
                 val_loss += self.criterion(outputs, labels).item()
                 _, predicted = torch.max(outputs.data, 1)
@@ -62,12 +66,3 @@ class Trainer:
 
         return avg_loss, accuracy
 
-    def save_ckpt(self, model, epoch, ckpt_path):
-
-        ckpt_filepath = os.path.join(ckpt_path,'ckpt.pth')
-
-        torch.save({
-            'num_epochs': epoch + 1,
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': self.optimizer.state_dict(),
-        }, ckpt_filepath)
