@@ -1,18 +1,4 @@
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
-
-""" 3 Convolutional Layers + 2 Fully Connected Layers
-m = CatsDogsModel(
-    conv_out_channels=[16, 32, 32, 64],
-    kernel_sizes=[3, 3, 5, 5],
-    linear_out_features=[64, 32, 16],
-    n_targets=1,
-    in_channels=3,
-    dropout=0.2,
-)
-"""
-
 
 class CNN(nn.Module):
     def __init__(self):
