@@ -27,7 +27,7 @@ def main(args):
         Resize((256, 256))
     ])
 
-    device = 'cuda:1' if torch.cuda.is_available() else 'cpu'
+    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     train_loader, val_loader, _ = get_dataloaders(args.root_path, args.batch_size, transform)
 
