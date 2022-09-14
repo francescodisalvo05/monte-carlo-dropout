@@ -34,7 +34,7 @@ class CNN(nn.Module):
         self.fc1 = nn.Linear(64*13*13, 2)
         self.sig1 = nn.Sigmoid()
 
-    def forward(self, x):
+    def forward(self, x, train=True):
 
         # layer 1
         x = self.pool1(self.relu1(self.bn1(self.conv1(x))))
@@ -48,8 +48,10 @@ class CNN(nn.Module):
         # layer 4
         x = self.pool4(self.relu4(self.bn4(self.conv4(x))))
 
-        # flatten
-        x = x.view(32, -1)
+        if train:
+            x = x.view(32, -1)
+        else:
+            x = x.view(1, -1)
 
         x = self.sig1(self.fc1(x))
 
