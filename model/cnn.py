@@ -48,6 +48,9 @@ class CNN(nn.Module):
         # layer 4
         x = self.pool4(self.relu4(self.bn4(self.conv4(x))))
 
+        # dropout
+        x = self.dropout1(x)
+
         if train:
             x = x.view(32, -1)
         else:

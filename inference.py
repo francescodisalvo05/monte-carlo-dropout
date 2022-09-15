@@ -73,7 +73,7 @@ if __name__ == '__main__':
                         help='Set the root path of the available images')
     parser.add_argument('-O', '--output_path', type=str, default='assets/predictions/dropoutOFF/',
                         help='Set the root path of the predictions')
-    parser.add_argument('-M', '--model_path', type=str, default='assets/checkpoints/ckpt.pth',
+    parser.add_argument('-M', '--model_path', type=str, default='assets/checkpoints/ckpt_dropout.pth',
                         help='Set the checkpoint filepath')
 
 
