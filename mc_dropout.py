@@ -1,4 +1,10 @@
+from utils.monte_carlo import monte_carlo_inferences, \
+                              store_monte_carlo_statistics, \
+                              get_average_accuracy, \
+                              get_std_histplot, \
+                              plot_examples
 from utils.utils import set_seed, get_dataloaders
+from collections import defaultdict
 from argparse import ArgumentParser
 
 from torchvision.transforms import ToTensor, Resize
@@ -20,17 +26,8 @@ def main(args):
     # set device
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
-    # load model checkpoint
+    # get model
     model = CNN()
-    model.load_state_dict(torch.load(args.model_path, map_location=device))
-
-    def enable_dropout(m):
-        for each_module in m.modules():
-            if each_module.__class__.__name__.startswith('Dropout'):
-                each_module.train()
-
-    model.eval()
-    enable_dropout(model)
 
     # transform
     transform = transforms.Compose([
@@ -41,33 +38,23 @@ def main(args):
     # get data
     _, _, test_loader = get_dataloaders(args.root_path, 1, transform)
 
-    for inference_idx in range(1,args.num_inferences + 1):
+    # -- MAKE INFERENCE AND STORE PREDICTIONS ON DISK -- #
+    # monte_carlo_inferences(args, test_loader, model, device)
 
-        labels, predictions, pos_probabilities = [], [], []
+    # -- EXTRACT STATISTICS (MEAN/VAR) ACROSS MONTE CARLO SAMPLES -- #
+    #store_monte_carlo_statistics(args)
 
-        for idx, (image,label) in enumerate(test_loader):
+    # -- GET AVERAGE ACCURACY -- #
+    # get_average_accuracy(args)
 
-            image, label = image.to(device), label.to(device)
+    # -- PLOT Y-CASTED HISTPLOT -- #
+    # get_std_histplot(args)
 
-            output = model(image, train=False)
-            output_max_idx = np.argmax(output.cpu().detach().numpy()[0])
+    # -- GET EXAMPLE OF CERTAIN / UNCERTAIN MASSES -- #
+    plot_examples(args)
 
-            predictions.append(output_max_idx)
-            labels.append(label.cpu().detach().numpy()[0])
-            pos_probabilities.append(output.cpu().detach().numpy().squeeze()[1])
 
-        labels = np.asarray(labels)
-        predictions = np.asarray(predictions)
-        pos_probabilities = np.asarray(pos_probabilities)
 
-        print(f'#{str(inference_idx).zfill(2)} Test accuracy {np.sum(labels == predictions)}/{len(predictions)} : {np.sum(labels == predictions)/len(predictions):.2f}')
-
-        with open(os.path.join(args.output_path,f'output_{str(inference_idx).zfill(2)}.txt'), 'w') as out_file:
-            # they have the same prediction order
-            filenames = test_loader.dataset.filenames
-            for f, p, l in zip(filenames, pos_probabilities, labels):
-                line = f'{f},{p},{l}\n'
-                out_file.write(line)
 
 if __name__ == '__main__':
 
@@ -82,9 +69,16 @@ if __name__ == '__main__':
                         help='Set the root path of the predictions')
     parser.add_argument('-M', '--model_path', type=str, default='assets/checkpoints/ckpt_dropout.pth',
                         help='Set the checkpoint filepath')
-
+    parser.add_argument('-U', '--uncertainty_path', type=str, default='assets/uncertainty/',
+                        help='Set the root path of the uncertainty results')
 
     args = parser.parse_args()
+
+    if not os.path.exists(args.output_path):
+        os.makedirs(args.output_path)
+
+    if not os.path.exists(args.uncertainty_path):
+        os.makedirs(args.uncertainty_path)
 
     set_seed(50)
 
