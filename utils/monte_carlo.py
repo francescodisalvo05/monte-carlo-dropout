@@ -1,7 +1,11 @@
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import seaborn as sns
+
+from PIL import Image
+import numpy as np
 
 import numpy as np
 import torch
@@ -121,8 +125,10 @@ def get_std_histplot(args):
 
     sns.displot(x=variances)
     plt.ylim((0,200))
+    plt.xlabel('Variance')
 
-    plt.savefig(os.path.join(args.uncertainty_path,'hist.png'), bbox_inch='tight')
+    plt.tight_layout()
+    plt.savefig(os.path.join(args.uncertainty_path,'hist.png'))
 
 def plot_examples(args):
 
@@ -141,5 +147,38 @@ def plot_examples(args):
     top_16_uncertain = filenames[ordered_variances][:-17:-1]
     top_16_certain = filenames[ordered_variances][:16]
 
-    print(f'Top 16 certain : {top_16_certain}')
-    print(f'Top 16 uncertain : {top_16_uncertain}')
+    # --- PLOT "CERTAIN" MASSES --- #
+    plt.figure()
+    f, axs = plt.subplots(4, 4)
+
+    axs = axs.ravel()
+
+    for idx, (fname,var) in enumerate(zip(top_16_certain,ordered_variances[:16])):
+        image = mpimg.imread(os.path.join(args.root_path,fname))
+        axs[idx].imshow(image)
+        axs[idx].axis('off')
+        axs[idx].set_title(f'{variances[var]}')
+
+    plt.suptitle('Top 16 \'certain\' masses')
+    plt.tight_layout()
+    plt.savefig(os.path.join(args.uncertainty_path,'certain.png'))
+    plt.close()
+
+    # --- PLOT "UNCERTAIN" MASSES --- #
+    plt.figure()
+    f, axs = plt.subplots(4, 4)
+
+    axs = axs.ravel()
+
+    for idx, (fname, var) in enumerate(zip(top_16_uncertain, ordered_variances[:-17:-1])):
+        image = mpimg.imread(os.path.join(args.root_path, fname))
+        axs[idx].imshow(image)
+        axs[idx].axis('off')
+        axs[idx].set_title(f'{variances[var]:4f}')
+
+    plt.suptitle('Top 16 \'uncertain\' masses')
+    plt.tight_layout()
+    plt.savefig(os.path.join(args.uncertainty_path, 'uncertain.png'))
+
+    # print(f'Top 16 certain : {top_16_certain}')
+    # print(f'Top 16 uncertain : {top_16_uncertain}')
