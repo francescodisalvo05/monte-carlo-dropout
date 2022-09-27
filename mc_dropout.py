@@ -48,7 +48,7 @@ def main(args):
     # get_average_accuracy(args)
 
     # -- PLOT Y-CASTED HISTPLOT -- #
-    # get_std_histplot(args)
+    get_std_histplot(args)
 
     # -- GET EXAMPLE OF CERTAIN / UNCERTAIN MASSES -- #
     plot_examples(args)
