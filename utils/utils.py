@@ -23,7 +23,6 @@ def set_seed(seed):
 
 def get_dataloaders(root_path, batch_size, transform):
 
-    # get only 1000 samples
     filenames = os.listdir(root_path)
     labels = [1 if f.split(".")[0] == 'dog' else 0 for f in filenames]
 

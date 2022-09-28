@@ -1,7 +1,7 @@
 from utils.monte_carlo import monte_carlo_inferences, \
                               store_monte_carlo_statistics, \
                               get_average_accuracy, \
-                              get_std_histplot, \
+                              get_var_histplot, \
                               plot_examples
 from utils.utils import set_seed, get_dataloaders
 from collections import defaultdict
@@ -39,16 +39,16 @@ def main(args):
     _, _, test_loader = get_dataloaders(args.root_path, 1, transform)
 
     # -- MAKE INFERENCE AND STORE PREDICTIONS ON DISK -- #
-    # monte_carlo_inferences(args, test_loader, model, device)
+    monte_carlo_inferences(args, test_loader, model, device)
 
     # -- EXTRACT STATISTICS (MEAN/VAR) ACROSS MONTE CARLO SAMPLES -- #
-    #store_monte_carlo_statistics(args)
+    store_monte_carlo_statistics(args)
 
     # -- GET AVERAGE ACCURACY -- #
-    # get_average_accuracy(args)
+    get_average_accuracy(args)
 
     # -- PLOT Y-CASTED HISTPLOT -- #
-    get_std_histplot(args)
+    get_var_histplot(args)
 
     # -- GET EXAMPLE OF CERTAIN / UNCERTAIN MASSES -- #
     plot_examples(args)

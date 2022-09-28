@@ -114,7 +114,7 @@ def get_average_accuracy(args):
     print(f'Accuracy on average MC samples : {np.sum(correct)/len(correct):.2f} ')
 
 
-def get_std_histplot(args):
+def get_var_histplot(args):
 
     variances = []
 
