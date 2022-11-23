@@ -1,5 +1,5 @@
 # Monte Carlo Dropout 🧠
-This repository aims to explain and illustrate the **Monte Carlo Dropout** for the evaluation of model uncertainty. Two blog-posts will be soon available on our platform: `stAI tuned`. The first one covers the Bayesian inference and the Monte Carlo dropout, highlighting pros and cons of both approaches, whereas the second one explains, step by step, the pipeline of this project. 
+This repository aims to explain and illustrate the **Monte Carlo Dropout** for the evaluation of model uncertainty. Two blog-posts will be soon available on our platform: `stAI tuned`. The [first one](https://staituned.com/learn/expert/30-days-of-machine-learning-engineering) covers the Bayesian inference and the Monte Carlo dropout, highlighting pros and cons of both approaches, whereas the second one explains, step by step, the pipeline of this project. 
 
 <p align="center">
   <img src="./images/MCDropoutPipelineV2.jpeg" height="300px" width="auto" />
